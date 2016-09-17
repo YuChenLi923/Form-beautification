@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="content-type" content="text/html;charset:UTF-8">
 	<title>表单美化</title>
 	<link rel="stylesheet" type="text/css" href="css/Form beautification.css">
 </head>
@@ -8,8 +9,13 @@
 	<form>
 	<div class="sort" id='select'>
 		<span Type='show'>请选择</span>
-		<ul>
-		</ul>
+		<div class="selectArea" id='selectArea'>
+			<ul id='body'>
+			</ul>
+			<div id='scroll'>
+				<button id='bar' onclick="return false"></button>
+			</div>
+		</div>
 		<input name='select' type="hidden" value=""></input>
 	</div>
 	<div id='radios'>
