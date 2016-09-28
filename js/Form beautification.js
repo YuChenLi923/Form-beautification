@@ -1,71 +1,3 @@
-var	sccrollBarObj={
-	createScrollBar:function(scrollBar) {
-		var scroll=document.getElementById(scrollBar.scroll),
-			body=document.getElementById(scrollBar.body),
-			bar=document.getElementById(scrollBar.bar),
-			warp=document.getElementById(scrollBar.warp),
-			warpH=warp.clientHeight,
-			bodyH=body.offsetHeight,
-			speed=scrollBar.speed,
-			barMinH=scrollBar.barMinH,
-			scrollH=scroll.offsetHeight,
-			flag=scrollBar.flag,
-			barH=((bodyH-warpH)/8)>(scrollH-barMinH)?barMinH:(scrollH-(bodyH-warpH)/8),
-			curY,
-			curBarPos,
-			newPos=0;
-		bar.style.height=barH+'px';	
-		scroll.onmousedown=function(e){
-			flag=1;
-			var e=e||window.event;
-			curBarPos=bar.offsetTop;
-			curY=e.clientY;
-			document.body.onselectstart = function(){return false};
-		}
-		window.onmousemove=function(e){
-			if(flag==1){
-				var e=e||window.event,
-					newY=e.clientY;
-				newPos=newY-curY+curBarPos;
-				 moveBar(newPos);
-			}
-			document.body.onselectstart = function(){return false};
-		}
-		window.onmouseup=function(){
-			flag=0;
-			document.body.onselectstart = function(){return false};
-		}
-
-		if(window.navigator.userAgent.toLowerCase().indexOf('firefox')!=-1){
-			document.addEventListener("DOMMouseScroll",function(e){wheel(e);},false);
-		}
-		else{
-			warp.onmousewheel=function(e){wheel(e);}
-		}	
-
-		function wheel(e){
-			var e=e||window.event;
-			if(e.wheelDelta>0&&e.wheelDelta%120==0||e.detail===-3){
-				newPos=newPos-5<0?0:newPos-5;
-			}
-			else if(e.wheelDelta<0&&e.wheelDelta%120==0||e.detail===3){
-				newPos=newPos+5>scrollH-barH?(scrollH-barH):newPos+5;
-			}
-			moveBar(newPos);
-		}
-		function moveBar(newPos){
-			var pos=parseInt(bar.style.marginTop);
-			if(newPos<0){
-				newPos=0;
-			}
-			else if(newPos>scrollH-barH){
-				newPos=scrollH-barH;
-			}
-			bar.style.marginTop=newPos+'px';
-			body.style.marginTop=(-1)*newPos*(bodyH-warpH)/(scrollH-barH)+'px';
-		}
-	}
-} 
 var radioObject={
 	createRadio:function(Radios){
 		var radios=document.getElementById(Radios.id),
@@ -84,7 +16,7 @@ var radioObject={
 			optionBox.className='radio';
 			optionBox.setAttribute('index',i);
 			optionText.className='text';
-			optionText.innerHTML=options[i],
+			optionText.innerHTML=options[i];
 			radios.appendChild(optionBox);
 			radios.appendChild(optionText);
 			flag[i]=0;
@@ -123,7 +55,7 @@ var SelectObject={
 			selectBox=select.getElementsByTagName('ul')[0],
 			input=select.getElementsByTagName('input')[0],
 			show=select.getElementsByTagName('span')[0],
-			selectArea=document.getElementById(sel.select+'Area'),
+			selectArea=document.getElementById(sel.scroll_area),
 			options=sel.options,
 			num=options.length,
 			flag=0,
@@ -165,10 +97,10 @@ var SelectObject={
 				if(!scrollBar&&max<num){
 					var scrollBar=Object.create(scrollBarObj);
 					scrollBar.createScrollBar({
-						scroll:'scroll',//滚动栏的ID
-						body:'body',//滚动内容的ID
-						warp:'selectArea',//滚动区的ID
-						bar:'bar',//滚动条的ID
+						scroll:sel.scroll,//滚动栏的ID
+						body:sel.scroll_body,//滚动内容的ID
+						warp:sel.scroll_area,//滚动区的ID
+						bar:sel.scroll_bar,//滚动条的ID
 						barMinH:20,//滚动条的最小高度
 						speed:5,
 						flag:0
@@ -177,6 +109,19 @@ var SelectObject={
 		}
 	}
 };
+var fileObject={
+	createFile:function(file){
+		var fileBox=document.getElementById(file.fileBox),
+			fileInf=document.getElementById(file.fileInf),
+			fileWarp=document.getElementById(file.fileWarp),
+			input=document.getElementById(file.input),
+			fileUp=fileWarp.getElementsByTagName('input')[0];
+		fileUp.onchange=function(e){
+			var e=e||window.event;
+			fileInf.innerHTML=this.value;
+		}
+	}
+}
 var radio1=Object.create(radioObject);
 radio1.createRadio({
 	id:'radios',//选择按钮集合的ID
@@ -187,11 +132,22 @@ radio1.createRadio({
 var select1=Object.create(SelectObject);
 select1.createSelect({
 	select:'select',//选框的ID
-	scroll:'scroll',//滚动条ID
+	scroll:'scroll',//滚动栏ID
+	scroll_body:'body',//滚动内容的ID
+	scroll_area:'selectArea', //滚动区的ID
+	scroll_bar:'bar',//滚动条的ID
 	options:['选项一','选项二','选项三','选项四','选项五','选项六','选项七'],//选框的选项
 	Max:4,//显示选项的最大数量，若超过这个数量则会出现滚动条
 	optionH:28
 });
 
- 
+var file1=Object.create(fileObject);
+file1.createFile(
+	{
+		fileBox:'fileBox',
+		fileInf:'fileInf',
+		fileWarp:'fileWarp',
+		input:'files'
+	}
+); 
 

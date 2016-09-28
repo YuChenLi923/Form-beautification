@@ -2,7 +2,10 @@
 	padding: 0;
 	margin: 0;
 }
-
+form{
+	height: 800px;
+	width: 800px;
+}
 /*美化select的样式，自己可以根据结构随便写*/
 .sort{
 	text-align: center;
@@ -86,4 +89,39 @@
 	height: 14px;
 	line-height: 14px;
 	margin-left: 6px;
+}
+
+/*美化fileUp*/
+#fileUp{
+	float: left;
+	margin-top: 100px;
+	margin-left: 100px;
+}
+#fileWarp{
+	position: relative;
+	height: 20px;
+	width:70px;
+	display: block;
+	overflow: hidden;
+	border:1px solid #333;
+	text-align: center;
+	float: left;
+}
+#fileWarp input{
+	opacity:0;
+	position: absolute;
+	left:0;
+	width: 100%;
+}
+#fileInf{
+	min-width: 100px;
+	float: left;
+	height:20px;
+	text-align: center;
+	border: 1px solid #333;
+}
+#fileBox{
+	margin-left: 10px;
+	margin-top: 20px;
+	float: left;
 }
