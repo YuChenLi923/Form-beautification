@@ -1,9 +1,10 @@
 var	scrollBarObj={
 	createScrollBar:function(scrollBar) {
-		var scroll=document.getElementById(scrollBar.scroll),
-			body=document.getElementById(scrollBar.body),
-			bar=document.getElementById(scrollBar.bar),
-			warp=document.getElementById(scrollBar.warp),
+		var doc=document,
+			scroll=doc.getElementById(scrollBar.scroll),
+			body=doc.getElementById(scrollBar.body),
+			bar=doc.getElementById(scrollBar.bar),
+			warp=doc.getElementById(scrollBar.warp),
 			warpH=warp.clientHeight,
 			bodyH=body.offsetHeight,
 			speed=scrollBar.speed,
@@ -20,7 +21,7 @@ var	scrollBarObj={
 			var e=e||window.event;
 			curBarPos=bar.offsetTop;
 			curY=e.clientY;
-			document.body.onselectstart = function(){return false};
+			doc.body.onselectstart = function(){return false};
 		}
 		window.onmousemove=function(e){
 			if(flag==1){
@@ -29,15 +30,15 @@ var	scrollBarObj={
 				newPos=newY-curY+curBarPos;
 				 moveBar(newPos);
 			}
-			document.body.onselectstart = function(){return false};
+			doc.body.onselectstart = function(){return false};
 		}
 		window.onmouseup=function(){
 			flag=0;
-			document.body.onselectstart = function(){return false};
+			doc.body.onselectstart = function(){return false};
 		}
 
 		if(window.navigator.userAgent.toLowerCase().indexOf('firefox')!=-1){
-			document.addEventListener("DOMMouseScroll",function(e){wheel(e);},false);
+			doc.addEventListener("DOMMouseScroll",function(e){wheel(e);},false);
 		}
 		else{
 			warp.onmousewheel=function(e){wheel(e);}

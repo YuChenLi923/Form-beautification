@@ -122,6 +122,59 @@ var fileObject={
 		}
 	}
 }
+var rangeObject={
+	createRange:function(Range){
+		var doc=document,
+			rangeArea=doc.getElementById(Range.range),
+			haveArea=doc.getElementById(Range.have),
+			input=doc.getElementById(Range.input),
+			bar=doc.getElementById(Range.bar),
+			min=Range.min,
+			max=Range.max,
+			flag=false,
+			width=rangeArea.offsetWidth-bar.offsetWidth;
+		addEvent(rangeArea,'click',function(e){
+			var e=e||window.event,
+				target=e.target||e.srcElement,
+				id=target.id,
+				x=e.clientX,
+				curX,
+				cur;
+			if(id!=Range.bar){
+				curX=getElementCoordinate(rangeArea).x;
+				cur=x-curX;
+				if(cur<0){
+					cur=0
+				}
+				if(cur>width){
+					cur=width;
+				}
+				have.style.width=cur+'px';
+			}
+		});
+		addEvent(bar,'mousedown',function(){
+			flag=true;
+		});
+		addEvent(window,'mouseup',function(){
+			flag=false;
+		});
+		addEvent(window,'mousemove',function(e){
+			if(flag){
+				var e=e||window.event,
+					x=e.clientX;
+					curX=getElementCoordinate(bar).x;
+					cur=haveArea.offsetWidth+x-curX;
+				if(cur<0){
+					cur=0
+				}
+				if(cur>width){
+					cur=width;
+				}
+				have.style.width=cur+'px';
+			}
+		});
+	}
+}
 var radio1=Object.create(radioObject);
 radio1.createRadio({
 	id:'radios',//选择按钮集合的ID
@@ -151,3 +204,13 @@ file1.createFile(
 	}
 ); 
 
+var rang1=Object.create(rangeObject);
+
+rang1.createRange({
+	min:10,//最小值
+	max:100,//最大值
+	bar:'rangeBar',//滑动按钮
+	have:'have',//滑动条
+	range:'range',//总滑动条
+	input:'ranges'
+});
