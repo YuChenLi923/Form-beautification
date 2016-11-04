@@ -17,7 +17,6 @@ form{
 	line-height: 30px;
 	margin-top: 20px;
 	margin-left: 24px;
-	float: left;
 	position: relative;
 }
 .sort ul{
@@ -25,7 +24,6 @@ form{
 	border-top:none;	
 	width:100%;
 	float: left;
-	
 }	
 .sort li{
 	width:100%;
@@ -56,8 +54,8 @@ form{
 .selectArea #scroll{
 	width:10%;
 	height: 100%;
-	float: left;
 	display: none;
+	float:left;
 }
 .selectArea #bar{
 	width: 100%;
@@ -71,8 +69,7 @@ form{
 
 /*美化radio*/
 #radios{
-	float: left;
-	margin-left: 100px;
+	overflow:hidden;
 	margin-top: 25px;
 }
 .radio{
@@ -93,7 +90,6 @@ form{
 
 /*美化fileUp*/
 #fileUp{
-	float: left;
 	margin-top: 100px;
 	margin-left: 100px;
 }
@@ -123,17 +119,16 @@ form{
 #fileBox{
 	margin-left: 10px;
 	margin-top: 20px;
-	float: left;
+	overflow:hidden;
 }
 
-/*美化滑动条*/
+/*美化滑动条-横向*/
 #range{
-	margin-top:100px;
-	position:absolute;
-	left:10px;
+	margin-top:10px;
+	margin-left:2px;
 }
 .range{
-	width:200px;
+	width:300px;
 	height:10px;
 	background-color:#666666;
 }
@@ -146,9 +141,38 @@ form{
 .range .Bar{
 	display:block;
 	outline:none;
+	height:10px;
+	width:20px;
+	top:-2px;
+	border:1px solid black;
+}
+
+/*美化滑动条-竖向*/
+#range1{
+	margin-top:10px;
+	margin-left:5px;
+	position:relative;
+}
+.range1{
+	width:10px;
+	height:100px;
+	background-color:#666666;
+}
+.range1 .have{
+	position:absolute;
+	bottom:0;
+	width:10px;
+	background-color:red;
+}
+
+.range1 .Bar{
+	position:absolute;
+	bottom:0px;
+	outline:none;
 	height:16px;
 	width:20px;
-	margin-top:-3px;
+	margin-left:-5px;
 	border-radius:4px;
 	border:1px solid black;
 }
+

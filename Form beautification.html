@@ -6,7 +6,6 @@
 	<link rel="stylesheet" type="text/css" href="css/Form beautification.css">
 </head>
 <body>
-	<form>
 	<div class="sort" id='select'>
 		<span Type='show'>请选择</span>
 		<div class="selectArea" id='selectArea'>
@@ -27,13 +26,70 @@
 	</div>
 	<div id='range' class='range'>
 		<div id='have' class='have'></div>
-		<button id='rangeBar' class='Bar' return='false'></button>
+		<button id='rangeBar' class='Bar' onclick='return false'></button>
 		<input type='hidden' id='ranges'></input>
 	</div>
+	<div id='range1' class='range1'>
+		<button id='rangeBar1' class='Bar' onclick='return false'></button>
+		<div id='have1' class='have'></div>
+		<input type='hidden' id='ranges1'></input>
+	</div>
 	</form>
-	<script type="text/javascript" src="js/commonFunction.js"></script>
-	<script type="text/javascript" src="js/scroll bar.js"></script>
 	<script type="text/javascript" src="js/Form beautification.js"></script>
+	<script type="text/javascript">
+		var radio1=Object.create(radioObject);
+		radio1.createRadio({
+			id:'radios',//选择按钮集合的ID
+			Max:1,//最大选择数量
+			options:['选项一','选项二','选项三','选项四','选项五'],//选项
+			choicePic:'images/selected.png'
+		});
 
+
+		var select1=Object.create(SelectObject);
+		select1.createSelect({
+			select:'select',//选框的ID
+			scroll:'scroll',//滚动栏ID
+			scroll_body:'body',//滚动内容的ID
+			scroll_area:'selectArea', //滚动区的ID
+			scroll_bar:'bar',//滚动条的ID
+			options:['选项一','选项二','选项三','选项四','选项五','选项六','选项七'],//选框的选项
+			Max:4,//显示选项的最大数量，若超过这个数量则会出现滚动条
+			optionH:28
+		});
+
+		var file1=Object.create(fileObject);
+		file1.createFile(
+			{
+				fileBox:'fileBox',
+				fileInf:'fileInf',
+				fileWarp:'fileWarp',
+				input:'files'
+			}
+		); 
+
+
+		var rang1=Object.create(rangeObject);
+		rang1.createRange({
+			bar:'rangeBar',//滑动按钮
+			have:'have',//滑动条
+			range:'range',//总滑动
+			direction:'horizontal',//方向
+			Handler:Handler//range按钮数值变化时自定义函数
+		});
+
+
+		var rang2=Object.create(rangeObject);
+		rang2.createRange({
+			bar:'rangeBar1',//滑动按钮
+			have:'have1',//滑动条
+			range:'range1',//总滑动条
+			direction:'vertical',//方向
+			Handler:Handler//range按钮数值变化时自定义函数
+		});
+		function Handler(value){
+			console.log(value);
+		}
+	</script>
 </body>
 </html>

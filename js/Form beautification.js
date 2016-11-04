@@ -1,3 +1,166 @@
+//向某个对象添加事件
+function addEvent(Obj,e,func) {
+	if(window.addEventListener){
+		Obj.addEventListener(e,func);
+		addEvent=function(Obj,e,func){
+			Obj.addEventListener(e,func);
+		};
+	}
+	else if(Obj.attachEvent){
+		Obj.attachEvent('on'+e,func);
+		addEvent=function(Obj,e,func){
+			Obj.attachEvent('on'+e,func);
+		};
+	}
+	else{
+		Obj['on'+e]=func;
+		addEvent=function(Obj,e,func){
+			Obj['on'+e]=func;
+		};
+	}
+}
+//获取元素左上角的坐标
+function getElementCoordinate(elem){
+	var x=y=0;
+	while(elem.offsetParent){
+		x=x+elem.offsetLeft;
+		y=y+elem.offsetTop;
+		elem=elem.offsetParent;
+	}
+	return {
+		x:x,
+		y:y
+	}
+}
+//获取页面相关的大小信息
+function getPageSizeInf(){
+	var doc=document,
+		scrollTop = window.pageYOffset|| doc.documentElement.scrollTop || doc.body.scrollTop,
+		viewHeight =Math.min(doc.documentElement.scrollHeight,doc.clientHeight),
+		docHeight=Math.max(doc.documentElement.scrollHeight,doc.documentElement.clientHeight),
+		scrollBottom=docHeight-viewHeight-scrollTop;
+	return {
+		scrollTop:scrollTop,
+		viewHeight:viewHeight,
+		docHeight:docHeight,
+		scrollBottom:scrollBottom
+	};
+}
+//最大程度优化元素获取
+function getElement(obj,select,dynamic){
+	var  doc=document,
+		elem=null,
+		flag=select.charAt(0);
+	if(flag==='#'){
+		if(doc.querySelector&&dynamic==false){
+			elem=obj.querySelector(select);
+		}
+		else{
+			elem=obj.getElementById(select.slice(1));
+		}
+	}
+	if(flag==='.'){
+		if(doc.querySelectorAll&&dynamic==false){
+			elem=obj.querySelectorAll(select);
+		}
+		else{
+			if(doc.getElementsByClassName){
+				elem=obj.getElementsByClassName(select.slice(1));
+			}
+			else{
+				var AllElem=doc.getElementsByTagName('*'),
+					result=[];
+
+				for(var i=0,max=AllElem.length;i<max;i++){
+					if(AllElem[i].className==select.slice(1)){
+						result.push(AllElem[i]);
+					}
+				}
+				elem=result;
+			}
+		}
+	}
+	if(flag!='.'&&select.charAt(0)!='#'){
+		if(doc.querySelectorAll&&dynamic==false){
+			elem=obj.querySelectorAll(select);
+		}
+		else{
+			elem=obj.getElementsByTagName(select);
+		}
+	}
+	return elem;
+}
+
+
+var	scrollBarObj={
+	createScrollBar:function(scrollBar) {
+		var doc=document,
+			scroll=doc.getElementById(scrollBar.scroll),
+			body=doc.getElementById(scrollBar.body),
+			bar=doc.getElementById(scrollBar.bar),
+			warp=doc.getElementById(scrollBar.warp),
+			warpH=warp.clientHeight,
+			bodyH=body.offsetHeight,
+			speed=scrollBar.speed,
+			barMinH=scrollBar.barMinH,
+			scrollH=scroll.offsetHeight,
+			flag=scrollBar.flag,
+			barH=((bodyH-warpH)/8)>(scrollH-barMinH)?barMinH:(scrollH-(bodyH-warpH)/8),
+			curY,
+			curBarPos,
+			newPos=0;
+		bar.style.height=barH+'px';	
+		scroll.onmousedown=function(e){
+			flag=1;
+			var e=e||window.event;
+			curBarPos=bar.offsetTop;
+			curY=e.clientY;
+			doc.body.onselectstart = function(){return false};
+		}
+		window.onmousemove=function(e){
+			if(flag==1){
+				var e=e||window.event,
+					newY=e.clientY;
+				newPos=newY-curY+curBarPos;
+				 moveBar(newPos);
+			}
+			doc.body.onselectstart = function(){return false};
+		}
+		window.onmouseup=function(){
+			flag=0;
+			doc.body.onselectstart = function(){return false};
+		}
+
+		if(window.navigator.userAgent.toLowerCase().indexOf('firefox')!=-1){
+			doc.addEventListener("DOMMouseScroll",function(e){wheel(e);},false);
+		}
+		else{
+			warp.onmousewheel=function(e){wheel(e);}
+		}	
+
+		function wheel(e){
+			var e=e||window.event;
+			if(e.wheelDelta>0&&e.wheelDelta%120==0||e.detail===-3){
+				newPos=newPos-5<0?0:newPos-5;
+			}
+			else if(e.wheelDelta<0&&e.wheelDelta%120==0||e.detail===3){
+				newPos=newPos+5>scrollH-barH?(scrollH-barH):newPos+5;
+			}
+			moveBar(newPos);
+		}
+		function moveBar(newPos){
+			var pos=parseInt(bar.style.marginTop);
+			if(newPos<0){
+				newPos=0;
+			}
+			else if(newPos>scrollH-barH){
+				newPos=scrollH-barH;
+			}
+			bar.style.marginTop=newPos+'px';
+			body.style.marginTop=(-1)*newPos*(bodyH-warpH)/(scrollH-barH)+'px';
+		}
+	}
+} 
 var radioObject={
 	createRadio:function(Radios){
 		var radios=document.getElementById(Radios.id),
@@ -127,29 +290,49 @@ var rangeObject={
 		var doc=document,
 			rangeArea=doc.getElementById(Range.range),
 			haveArea=doc.getElementById(Range.have),
-			input=doc.getElementById(Range.input),
 			bar=doc.getElementById(Range.bar),
-			min=Range.min,
-			max=Range.max,
 			flag=false,
-			width=rangeArea.offsetWidth-bar.offsetWidth;
+			width=rangeArea.offsetWidth-bar.offsetWidth,
+			height=rangeArea.offsetHeight-bar.offsetHeight,
+			Handler=Range.Handler||null,
+			direction=Range.direction;
+		function makePos(e){
+			var cur;
+			if(direction=='horizontal'){
+					var x=e.clientX,
+						curX=getElementCoordinate(rangeArea).x;
+					cur=x-curX;
+					if(cur<0){
+						cur=0;
+					}	
+					if(cur>width){
+						cur=width;
+					}
+					haveArea.style.width=cur+'px';
+				}
+			if(direction=='vertical'){
+					var y=e.clientY,
+						curY=getElementCoordinate(rangeArea).y;
+					cur=height-(y-curY);
+					if(cur<0){
+						cur=0;
+					}
+					if(cur>height){
+						cur=height;
+					}
+					haveArea.style.height=cur+'px';
+					bar.style.bottom=cur+'px';
+			}
+			if(Handler){
+					Handler(cur);
+			}
+		}
 		addEvent(rangeArea,'click',function(e){
 			var e=e||window.event,
 				target=e.target||e.srcElement,
-				id=target.id,
-				x=e.clientX,
-				curX,
-				cur;
+				id=target.id;
 			if(id!=Range.bar){
-				curX=getElementCoordinate(rangeArea).x;
-				cur=x-curX;
-				if(cur<0){
-					cur=0
-				}
-				if(cur>width){
-					cur=width;
-				}
-				have.style.width=cur+'px';
+				makePos(e);
 			}
 		});
 		addEvent(bar,'mousedown',function(){
@@ -161,56 +344,10 @@ var rangeObject={
 		addEvent(window,'mousemove',function(e){
 			if(flag){
 				var e=e||window.event,
-					x=e.clientX;
-					curX=getElementCoordinate(bar).x;
-					cur=haveArea.offsetWidth+x-curX;
-				if(cur<0){
-					cur=0
-				}
-				if(cur>width){
-					cur=width;
-				}
-				have.style.width=cur+'px';
+					x=e.clientX,
+					cur;
+				makePos(e);
 			}
 		});
 	}
 }
-var radio1=Object.create(radioObject);
-radio1.createRadio({
-	id:'radios',//选择按钮集合的ID
-	Max:1,//最大选择数量
-	options:['选项一','选项二','选项三','选项四','选项五'],//选项
-	choicePic:'images/selected.png'
-});
-var select1=Object.create(SelectObject);
-select1.createSelect({
-	select:'select',//选框的ID
-	scroll:'scroll',//滚动栏ID
-	scroll_body:'body',//滚动内容的ID
-	scroll_area:'selectArea', //滚动区的ID
-	scroll_bar:'bar',//滚动条的ID
-	options:['选项一','选项二','选项三','选项四','选项五','选项六','选项七'],//选框的选项
-	Max:4,//显示选项的最大数量，若超过这个数量则会出现滚动条
-	optionH:28
-});
-
-var file1=Object.create(fileObject);
-file1.createFile(
-	{
-		fileBox:'fileBox',
-		fileInf:'fileInf',
-		fileWarp:'fileWarp',
-		input:'files'
-	}
-); 
-
-var rang1=Object.create(rangeObject);
-
-rang1.createRange({
-	min:10,//最小值
-	max:100,//最大值
-	bar:'rangeBar',//滑动按钮
-	have:'have',//滑动条
-	range:'range',//总滑动条
-	input:'ranges'
-});
